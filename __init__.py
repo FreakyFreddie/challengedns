@@ -137,9 +137,9 @@ def load(app):
     @challengedns.route('/admin/challengedns/manage/record/<string:chalname>/update', methods=['POST'])
     @admins_only
     def update_record(chalname):
-        if request.form[ipaddress]:
+        if request.form["ipaddress"]:
             try:
-                return update_operation(chalname)
+                return update_operation(chalname, request.form["ipaddress"])
             except Exception as e:
                 print("Caught Exception : " + str(e))
                 return "Caught Exception : " + str(e)
@@ -149,24 +149,30 @@ def load(app):
     @challengedns.route('/admin/challengedns/manage/record/new', methods=['POST'])
     @admins_only
     def create_record():
-        if request.form[chalname] and request.form[ipaddress]:
+        if request.form["chalname"] and request.form["ipaddress"]:
             try:
-                return create_operation(chalname, ipaddress)
+                return create_operation(request.form["chalname"], request.form["ipaddress"])
             except Exception as e:
                 print("Caught Exception : " + str(e))
                 return "Caught Exception : " + str(e)
         else:
             return "ipaddress or chalname not set."
 
-    def delete_operation(hostname):
+    def delete_operation(chalname):
         #check if exists
         #delete
         nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first()
 
-        if nameserver and hostname:
+        if nameserver and chalname:
+            chalname = chalname.lower()
+
+            # Append only if chalname not blacklisted
+            if chalname in chalname_blacklist:
+                return "This record name is blacklisted."
+
             operation = delete_format.format(
                 nameserver,
-                hostname)
+                chalname)
             return_code, stdout = nsupdate(operation)
             if return_code != 0:
                 return stdout
@@ -177,15 +183,21 @@ def load(app):
             print("Parameters not correct.")
             return "Parameters not correct."
 
-    def update_operation(hostname, ipaddress):
+    def update_operation(chalname, ipaddress):
         #check if exists
         #update record
         nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first()
 
-        if nameserver and hostname and ipaddress:
+        if nameserver and chalname and ipaddress:
+            chalname = chalname.lower()
+
+            # Append only if chalname not blacklisted
+            if chalname in chalname_blacklist:
+                return "This record name is blacklisted."
+
             operation = update_format.format(
                 nameserver,
-                hostname,
+                chalname,
                 8640,
                 ipaddress)
 
@@ -199,19 +211,26 @@ def load(app):
             print("Parameters not correct.")
             return "Parameters not correct."
 
-    def create_operation(hostname, ipaddress):
+    def create_operation(chalname, ipaddress):
         # check if exists
         # update record
         nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first()
 
-        if nameserver and hostname and ipaddress:
+        if nameserver and chalname and ipaddress:
+            chalname = chalname.lower()
+
+            # Append only if chalname not blacklisted
+            if chalname in chalname_blacklist:
+                return "This record name is blacklisted."
+            
             operation = create_format.format(
                 nameserver,
-                hostname,
+                chalname,
                 8640,
                 ipaddress)
 
             return_code, stdout = nsupdate(operation)
+            
             if return_code != 0:
                 return stdout
             else:
@@ -223,7 +242,7 @@ def load(app):
             return "Parameters not correct."
 
 
-    def nsupdate(update):
+    def nsupdate(operation):
         keyfile = challengeDNSConfig.query.filter_by(option="Keyfile").first()
 
         cmd = 'nsupdate -k {0}'.format(keyfile)
@@ -232,21 +251,18 @@ def load(app):
         # shlex.split() splits the cmd string using shell-like syntax
         subp = Popen(shlex.split(cmd), stdout=PIPE, stdin=PIPE, stderr=STDOUT)
 
-        stdout =subp.communicate(input=update)[0]
+        stdout =subp.communicate(input=operation)[0]
 
         return subp.returncode, stdout.decode()
 
     def output_zone_records(rootdomain, nameserver):
         cmd = 'dig @{0} {1} axfr'.format(nameserver, rootdomain)
 
-        # open subprocess and execute nsupdate cmd
+        # open subprocess and execute dig cmd
         # shlex.split() splits the cmd string using shell-like syntax
         subp = Popen(shlex.split(cmd), stdout=PIPE, stdin=PIPE, stderr=STDOUT)
 
-        stdout =subp.communicate(input=update)[0]
-
-        # only show A records, not NS, SOA or any other
-        # remove comments (lines starting with ;;)
+        stdout =subp.communicate(input=cmd)[0]
 
         return subp.returncode, stdout.decode()
 
@@ -263,26 +279,17 @@ def load(app):
             record = rec.split()
 
             # Only append A records
+            # Only append name a
             if record[3] == "A":
                 rootdomain += "."
                 chalname = record[0].replace(rootdomain, "")
 
-                # Append only
+                # Append only if chalname not blacklisted
                 if chalname not in chalname_blacklist:
-                    records.append(record)
+                    # append challenge name and IP
+                    records.append([record[0],[record[4]])
 
         return records
-
-
-    def fetch_vm_by_uuid(vm_uuid, service_instance):
-        try:
-            vm = service_instance.content.searchIndex.FindByUuid(None, vm_uuid,
-                                                   True,
-                                                   True)
-            return vm
-        except:
-            raise # "Unable to locate VirtualMachine."
-
 
     # plugin is not configured when one key has no value
     def is_configured():
@@ -309,251 +316,5 @@ def load(app):
                 settings[key] = [valid_settings[key][0], challengednsconfigopt.value]
 
         return settings
-
-
-    def connect_to_vsphere():
-        challengednsconfigusername = challengednsConfig.query.filter_by(option="Username").first()
-        challengednsconfigpassword = challengednsConfig.query.filter_by(option="Password").first()
-        challengednsconfighost = challengednsConfig.query.filter_by(option="Host").first()
-        challengednsconfigport = challengednsConfig.query.filter_by(option="Port").first()
-
-        username = challengednsconfigusername.value
-        password = challengednsconfigpassword.value
-        host = challengednsconfighost.value
-        port = challengednsconfigport.value
-
-        print("Attempting connection to vCenter...")
-
-        context = ssl._create_unverified_context()
-        service_instance = connect.SmartConnect(host=host,
-                                                user=username,
-                                                pwd=password,
-                                                port=int(port),
-                                                sslContext=context)
-
-        atexit.register(connect.Disconnect, service_instance)
-
-        return service_instance
-
-
-    def fetch_vm_list(service_instance):
-        content = service_instance.RetrieveContent()
-
-        # search recursively from root folder and return all found VirtualMachine objects
-        containerView = content.viewManager.CreateContainerView(
-            content.rootFolder, [vim.VirtualMachine], True)
-
-        virtual_machines = containerView.view
-        containerView.Destroy()
-
-        return virtual_machines
-
-
-    # function to update VM on/off status
-    # less data to lower network load
-    def fetch_vm_list_online_offline():
-        virtual_machines = fetch_vm_list(connect_to_vsphere())
-
-        vms = []
-
-        for virtual_machine in virtual_machines:
-            summary = virtual_machine.summary
-
-            name = summary.config.name
-            template = summary.config.template
-            blacklisted = False
-
-            # if vm is template, exclude
-            if template:
-                continue
-
-            # if vm is blacklisted, skip this iteration
-            for blacklisted_vm in vm_blacklist:
-                if name == blacklisted_vm['Name']:
-                    blacklisted = True
-            if blacklisted:
-                continue
-
-            instance_uuid = summary.config.instanceUuid
-            state = summary.runtime.powerState
-
-            if summary.guest is not None:
-                if summary.guest.ipAddress:
-                    ipaddress = summary.guest.ipAddress
-                else:
-                    ipaddress = "Unknown"
-
-                if summary.guest.toolsRunningStatus is not None:
-                    vmwaretools = summary.guest.toolsRunningStatus
-                else:
-                    vmwaretools = "guestToolsNotRunning"
-            else:
-                ipaddress = "Unknown"
-                vmwaretools = "guestToolsNotRunning"
-
-            # append VM to array
-            vms.append({
-                "Name": name,
-                "UUID": instance_uuid,
-                "State": state,  # powereedOff, poweredOn, ??StandBy, ??unknown, suspended
-                "Ipaddress": ipaddress,
-                "Vmwaretools": vmwaretools
-            })
-
-        return vms
-
-
-    # returns when tasklist is finished
-    def WaitForTasks(tasks, service_instance):
-        pc = service_instance.content.propertyCollector
-
-        taskList = [str(task) for task in tasks]
-
-        # Create filter
-        objSpecs = [vmodl.query.PropertyCollector.ObjectSpec(obj=task)
-                    for task in tasks]
-        propSpec = vmodl.query.PropertyCollector.PropertySpec(type=vim.Task,
-                                                              pathSet=[],
-                                                              all=True)
-        filterSpec = vmodl.query.PropertyCollector.FilterSpec()
-        filterSpec.objectSet = objSpecs
-        filterSpec.propSet = [propSpec]
-        filter = pc.CreateFilter(filterSpec, True)
-
-        try:
-            version, state = None, None
-
-            # Loop looking for updates till the state moves to a completed state.
-            while len(taskList):
-                update = pc.WaitForUpdates(version)
-                for filterSet in update.filterSet:
-                    for objSet in filterSet.objectSet:
-                        task = objSet.obj
-                        for change in objSet.changeSet:
-                            if change.name == 'info':
-                                state = change.val.state
-                            elif change.name == 'info.state':
-                                state = change.val
-                            else:
-                                continue
-
-                            if not str(task) in taskList:
-                                continue
-
-                            if state == vim.TaskInfo.State.success:
-                                # Remove task from taskList
-                                taskList.remove(str(task))
-                            elif state == vim.TaskInfo.State.error:
-                                raise task.info.error
-                # Move to next version
-                version = update.version
-        finally:
-            if filter:
-                filter.Destroy()
-
-
-    def powerstate_operation(vm_uuid, operation):
-        tasks = []
-
-        try:
-            service_instance = connect_to_vsphere()
-        except (IOError, vim.fault.InvalidLogin):
-            print("SmartConnect to vCenter failed.")
-            return "SmartConnect to vCenter failed."
-        except Exception as e:
-            print("Caught Exception : " + str(e))
-            return "Caught Exception : " + str(e)
-
-        try:
-            vm = fetch_vm_by_uuid(vm_uuid, service_instance)
-        except Exception as e:
-            return "Caught Exception : " + str(e)
-
-        for blacklisted_vm in vm_blacklist:
-            if vm.summary.config.name == blacklisted_vm['Name']:
-                print("Operation failed.")
-                return "Operation failed."
-
-
-        # only call powerOn on vm that is off and matches uuid
-        if(vm.summary.runtime.powerState == "poweredOff"):
-            # only call powerOn on vm that is off and matches uuid
-            if (operation == "powerOn"):
-                try:
-                    tasks.append(vm.PowerOn())
-
-                    # Wait for power on to complete
-                    WaitForTasks(tasks, service_instance)
-
-                except vmodl.MethodFault as e:
-                    return "Caught vmodl fault : " + e.msg
-                except Exception as e:
-                    return "Caught Exception : " + str(e)
-
-                print("Task complete.")
-                return "Success!"
-
-
-        elif(vm.summary.runtime.powerState == "poweredOn"):
-            if (operation == "Suspend"):
-                try:
-                    tasks.append(vm.Suspend())
-
-                    # Wait for task to complete
-                    WaitForTasks(tasks, service_instance)
-
-                except vmodl.MethodFault as e:
-                    return "Caught vmodl fault : " + e.msg
-                except Exception as e:
-                    return "Caught Exception : " + str(e)
-
-                print("Task complete.")
-                return "Success!"
-
-            elif (operation == "Shutdown"):
-                try:
-                    # This task returns nothing since it's executed in the guest VM
-                    tasks.append(vm.ShutdownGuest())
-
-                except vmodl.MethodFault as e:
-                    return "Caught vmodl fault : " + e.msg
-                except Exception as e:
-                    return "Caught Exception : " + str(e)
-
-                print("Shutdown signal send.")
-                return "Shutdown signal send."
-
-            elif (operation == "Reboot"):
-
-                try:
-                    # This task returns nothing since it's executed in the guest VM
-                    vm.RebootGuest()
-
-                except vmodl.MethodFault as e:
-                    return "Caught vmodl fault : " + e.msg
-                except Exception as e:
-                    return "Caught Exception : " + str(e)
-
-                print("Reboot signal send.")
-                return "Reboot signal send."
-
-        elif(vm.summary.runtime.powerState == "suspended"):
-            if (operation == "Resume"):
-                try:
-                    tasks.append(vm.PowerOn())
-
-                    # Wait for power on to complete
-                    WaitForTasks(tasks, service_instance)
-
-                except vmodl.MethodFault as e:
-                    return "Caught vmodl fault : " + e.msg
-                except Exception as e:
-                    return "Caught Exception : " + str(e)
-
-                print("Taks complete.")
-                return "Success!"
-
-        else:
-            return "requirements not met."
 
     app.register_blueprint(challengedns)

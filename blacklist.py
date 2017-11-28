@@ -2,5 +2,6 @@
 chalname_blacklist=[
     {'Name': ''},
     {'Name': 'ns1'},
-    {'Name': 'ns2'}
+    {'Name': 'ns2'},
+    {'Name': 'www'}
 ]

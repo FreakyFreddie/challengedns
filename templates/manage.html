@@ -76,16 +76,26 @@
 {% block scripts %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
-        var records = [{% for record in records %}
-                {{ '{' }}
-                    "Name" : "{{ record[0] }}",
-                    "IP" : "{{ record[1] }}"
-                {{ '}' }}{{ "," if not loop.last }}{% endfor %}
-        ];
-
         //If you want to add content dynamically and still need it to work, and also with more than one form, you can do this:
         $(document).ready(function() {
             // row was clicked
+            clickable_table_rows();
+
+            $("#newrecord").click(function(){
+                $('#record-modal').modal({show:true});
+            });
+
+            $("#createrecord").click(function(){
+                new_record($("#newchalname").val(),$("#newipaddress").val());
+
+
+            });
+
+            //refresh VMs every x milliseconds
+            setInterval (refresh_records(), 60000);
+        });
+
+        function clickable_table_rows(){
             $('.table > tbody > tr').click(function(){
                 var chalname = $(this).find(".chalname").text();
                 var ipaddress = $(this).find(".ipaddress").text();
@@ -116,68 +126,43 @@
                     refresh_records();
                 });
             });
+        }
 
-            $("#newrecord").click(function(){
-                $('#record-modal').modal({show:true});
+
+        function new_record(chalname, ipaddress) {
+            $request = $.ajax({
+                method: "POST",
+                url: script_root + "/admin/challengedns/manage/record/new?r=" + new Date().getTime(),
+                data: {nonce: "{{ nonce }}", "chalname": chalname, "ipaddress": ipaddress}
             });
 
-            $("#createrecord").click(function(){
-                new_record($("#newchalname").val(),$("#newipaddress").val());
-
-
-            });
-
-            //refresh VMs every x milliseconds
-            setInterval (refresh_records(), 60000);
-        });
-
-
-        function new_record(chalname, ipaddress){
-            $.ajax({
-                url: script_root + "/admin/manage/record/new",
-                data: {"chalname" : chalname, "ipaddress" : ipaddress},
-                success: function(response){
-
-
-                }
-            })
-                .done(function(response) {
-                    html =
-                    //close modal
-                    $('#record-modal').modal({show:false});
-
-                    //clear modal
-                    $("#newchalname").val("");
-                    $("#newipaddress").val("");
-
-                    //refresh
-                    refresh_records();
-                })
-                .fail(function (){
-
-                })
-        };
+            process_response($request);
         }
 
         function update_record(chalname, ipaddress){
+            $request = $.ajax({
+                method: "POST",
+                url: script_root + "/admin/challengedns/manage/record/" + chalname + "/update?r=" + new Date().getTime(),
+                data: {nonce: "{{ nonce }}", "ipaddress": ipaddress}
+            });
 
+            process_response($request);
         }
 
         function remove_record(chalname){
+            $request = $.ajax({
+                method: "POST",
+                url: script_root + "/admin/challengedns/manage/record/" + chalname + "delete?r=" + new Date().getTime(),
+                data: {nonce: "{{ nonce }}"}
+            });
 
+            process_response($request);
         }
 
-        function refresh_records(){
+        function process_response($request) {
+            var html;
 
-        }
-        // Stop form from submitting normally
-            event.preventDefault();
-
-            //url, data, success, datatype
-            $.post($(this).attr('action'), $(this).serialize(), function (response) {
-                var html = '';
-
-                // if response is empty, print ok, else print error
+            $request.done(function(response) {
                 if (response === "Success!") {
                     html = '<div class="alert alert-success alert-dismissable" role="alert">\n' +
                         '<span class="sr-only">Success:</span>\n' +
@@ -186,23 +171,7 @@
                         '<span aria-hidden="true">×</span></button>\n' +
                         '</div>';
                 }
-                else if(response === "Shutdown signal send."){
-                    html = '<div class="alert alert-success alert-dismissable" role="alert">\n' +
-                        '<span class="sr-only">Success:</span>\n' +
-                        'Shutdown signal send.' +
-                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                        '<span aria-hidden="true">×</span></button>\n' +
-                        '</div>';
-                }
-                else if(response === "Reboot signal send."){
-                    html = '<div class="alert alert-success alert-dismissable" role="alert">\n' +
-                        '<span class="sr-only">Success:</span>\n' +
-                        'Reboot signal send.' +
-                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                        '<span aria-hidden="true">×</span></button>\n' +
-                        '</div>';
-                }
-                else{
+                else {
                     html = '<div class="alert alert-danger alert-dismissable" role="alert">\n' +
                         '<span class="sr-only">Error:</span>\n' +
                         response +
@@ -210,20 +179,66 @@
                         '<span aria-hidden="true">×</span></button>\n' +
                         '</div>';
                 }
+            });
 
-                $("#errordiv").append(html);
+            $request.fail(function(){
+                    html = '<div class="alert alert-danger alert-dismissable" role="alert">\n' +
+                        '<span class="sr-only">Error:</span>\n' +
+                        'The request could not be completed.' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<span aria-hidden="true">×</span></button>\n' +
+                        '</div>';
+            });
 
-                refresh_records();
-            }).fail(function() {
-                var html = '<div class="alert alert-danger alert-dismissable" role="alert">\n' +
+            $("#errordiv").append(html);
+
+            //refresh
+            refresh_records();
+        }
+
+        function refresh_records(){
+            $request = $.ajax({
+                method:"POST",
+                url: script_root + "/admin/challengedns/manage/update?r=" + new Date().getTime(),
+                data: {nonce: "{{ nonce }}"}
+            });
+
+            $request.done(function(response) {
+                var new_records_html = build_table_body(JSON.parse(response));
+
+                $("#record-list").children("tbody").empty().append(new_records_html);
+
+                clickable_table_rows();
+            });
+
+            $request.fail(function(){
+                    var html = '<div class="alert alert-danger alert-dismissable" role="alert">\n' +
                         '<span class="sr-only">Error:</span>\n' +
                         'The request could not be completed.' +
                         '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                         '<span aria-hidden="true">×</span></button>\n' +
                         '</div>';
 
+                    $("#errordiv").append(html);
+            });
+        }
 
-                $("#errordiv").append(html);
+        function build_table_body(json_records){
+            var html = '';
+
+            for(var i = 0; i < json_records.length; i++)
+            {
+                html += '<tr data-toggle="modal" data-target="#record-modal"><td>' +
+                    i +
+                    '</td><td class="chalname">' +
+                    json_records[i][0] +
+                    '</td><td class="ipaddress">' +
+                    json_records[i][1] +
+                    '</td></tr>'
+            }
+
+            return html
+        }
 
         function refresh_vms(){
             $request = $.ajax({
