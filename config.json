@@ -1,4 +1,4 @@
 {
-    "name": "vSphereVMs",
-    "route": "/admin/vspherevms/manage"
+    "name": "challengeDNS",
+    "route": "/admin/challengedns/manage"
 }
