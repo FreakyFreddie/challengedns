@@ -1,0 +1,2 @@
+# challengedns plugin for CTFd
+

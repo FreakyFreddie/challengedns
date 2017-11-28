@@ -1,0 +1,37 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+    <div class="text-center">
+        {% for error in errors %}
+            <div class="alert alert-danger alert-dismissable" role="alert">
+              <span class="sr-only">Error:</span>
+              {{ error }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+        {% endfor %}
+        <br>
+        <h1>Configure challengeDNS</h1>
+        <div class="row">
+            <form action="{{ request.script_root }}/admin/challengedns/configure" method="POST">
+                <input id="nonce" value="{{ nonce }}" name="nonce" type="hidden" />
+                <fieldset>
+                    {% for key in settings %}
+                        <label for="{{key}}">{{key}}</label>
+                        <br />
+                        <input type="{{settings[key][0]}}" name="{{key}}" value="{{settings[key][1]}}"/>
+                        <br />
+                    {% endfor %}
+                </fieldset>
+                <fieldset id="submit_btn">
+                    <input type="submit" value="Submit" />
+                </fieldset>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
