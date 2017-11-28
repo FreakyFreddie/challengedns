@@ -16,7 +16,7 @@ def load(app):
     app.db.create_all()
 
     # create plugin blueprint with template folder
-    challengedns = Blueprint('challengedns', __name__, template_folder='templates')
+    challengedns = Blueprint('challengedns', __name__, template_folder='cdnstemplates')
 
     #valid configuration settions with their type
     valid_settings ={
