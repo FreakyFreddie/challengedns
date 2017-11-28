@@ -287,7 +287,7 @@ def load(app):
                 # Append only if chalname not blacklisted
                 if chalname not in chalname_blacklist:
                     # append challenge name and IP
-                    records.append([record[0],[record[4]])
+                    records.append([record[0],record[4]])
 
         return records
 

@@ -130,37 +130,34 @@
 
 
         function new_record(chalname, ipaddress) {
-            $request = $.ajax({
-                method: "POST",
-                url: script_root + "/admin/challengedns/manage/record/new?r=" + new Date().getTime(),
-                data: {nonce: "{{ nonce }}", "chalname": chalname, "ipaddress": ipaddress}
-            });
+            var url = script_root + "/admin/challengedns/manage/record/new?r=" + new Date().getTime();
+            var data = {nonce: "{{ nonce }}", "chalname": chalname, "ipaddress": ipaddress};
 
-            process_response($request);
+            process_request(url, data);
         }
 
         function update_record(chalname, ipaddress){
-            $request = $.ajax({
-                method: "POST",
-                url: script_root + "/admin/challengedns/manage/record/" + chalname + "/update?r=" + new Date().getTime(),
-                data: {nonce: "{{ nonce }}", "ipaddress": ipaddress}
-            });
+            var url = script_root + "/admin/challengedns/manage/record/" + chalname + "/update?r=" + new Date().getTime();
+            var data = {nonce: "{{ nonce }}", "ipaddress": ipaddress};
 
-            process_response($request);
+            process_request(url, data);
         }
 
         function remove_record(chalname){
-            $request = $.ajax({
-                method: "POST",
-                url: script_root + "/admin/challengedns/manage/record/" + chalname + "delete?r=" + new Date().getTime(),
-                data: {nonce: "{{ nonce }}"}
-            });
+            var url = script_root + "/admin/challengedns/manage/record/" + chalname + "delete?r=" + new Date().getTime();
+            var data = {nonce: "{{ nonce }}"};
 
-            process_response($request);
+            process_request(url, data);
         }
 
-        function process_response($request) {
-            var html;
+        function process_request(url, data) {
+            $request = $.ajax({
+                method: "POST",
+                url:  url,
+                data: data
+            });
+
+            var html = '';
 
             $request.done(function(response) {
                 if (response === "Success!") {
@@ -206,7 +203,7 @@
             $request.done(function(response) {
                 var new_records_html = build_table_body(JSON.parse(response));
 
-                $("#record-list").children("tbody").empty().append(new_records_html);
+                $("#record-list").find("tbody").empty().append(new_records_html);
 
                 clickable_table_rows();
             });
@@ -239,154 +236,6 @@
 
             return html
         }
-
-        function refresh_vms(){
-            $request = $.ajax({
-                method:"POST",
-                url: script_root + "/admin/vspherevms/manage/update?r=" + new Date().getTime(),
-                data: {nonce: "{{ nonce }}"}
-            });
-
-            $request.done(function(message){
-                var new_vm_array = JSON.parse(message);
-
-                //check if uuid already present in array
-                for(var i = 0; i < new_vm_array.length; i++) {
-                    var vm_already_present = false;
-
-                    for(var j = 0; j < vms.length; j++) {
-                        if(new_vm_array[i]["UUID"] === vms[j]["UUID"]){
-                            if(new_vm_array[i]["State"] !== vms[j]["State"] || new_vm_array[i]["Ipaddress"] !== vms[j]["Ipaddress"]){
-                                vms[j] = new_vm_array[i];
-                                update_existing_vm(new_vm_array[i]);
-                            }
-
-                            vm_already_present = true;
-                        }
-                    }
-
-                    if(vm_already_present === false){
-                        vms.push(new_vm_array[i]);
-                        add_new_vm(new_vm_array[i]);
-                    }
-                }
-            });
-        }
-
-        function update_existing_vm(vm){
-            var selector = "#" + vm["UUID"];
-            $(selector).empty();
-            fill_box(vm);
-        }
-
-        function add_new_vm(vm){
-            // add vm to list and print new box
-            // create new box
-            $("#vm-list").append("<div class=\"btn btn-theme btn-outlined\" id=\"" + vm["UUID"] + "\">");
-            fill_box(vm);
-        }
-
-        function fill_box(vm) {
-            var nonce = "{{ nonce }}";
-
-            var selector = "#" + vm["UUID"];
-            var html = '<ul class="list-unstyled">\n' +
-                '<li class="Name">' +
-                vm["Name"] +
-                '</li>\n' +
-                '<li class="Ipaddress">' +
-                vm["Ipaddress"] +
-                '</li>\n' +
-                '<li class="State"><span class="circle ';
-
-            if (vm["State"] === "poweredOn") {
-                html += "green";
-            }
-            else if (vm["State"] === "poweredOff") {
-                html += "red";
-            }
-            else if (vm["State"] === "suspended") {
-                html += "orange";
-            }
-            else {
-                html += "gray";
-            }
-
-            html += '"></span>  ' +
-                vm["State"] +
-                '</li>\n' +
-                '</ul>\n' +
-                '<div class="vm-operations">';
-
-            if (vm["State"] === "poweredOff") {
-                html += '<form class="vm-control" action="' +
-                    script_root +
-                    '/admin/vspherevms/manage/vm/' +
-                    vm["UUID"] +
-                    '/poweron" method="POST">\n' +
-                    '<input id="nonce" value="' +
-                    nonce +
-                    '" name="nonce" type="hidden" />\n' +
-                    '<button class="play" title="Start the VM"><i class="fa fa-play"></i></button>\n' +
-                    '</form>';
-            }
-            else if (vm["State"] === "poweredOn") {
-                html += '<form class="vm-control" action="' +
-                    script_root +
-                    '/admin/vspherevms/manage/vm/' +
-                    vm["UUID"] +
-                    '/suspend" method="POST">\n' +
-                    '<input id="nonce" value="' +
-                    nonce +
-                    '" name="nonce" type="hidden" />\n' +
-                    '<button class="suspend" title="Suspend the VM"><i class="fa fa-pause"></i></button>\n' +
-                    '</form>';
-
-                if (vm["Vmwaretools"] === "guestToolsRunning") {
-                    html = '<form class="vm-control" action="' +
-                        script_root +
-                        '/admin/vspherevms/manage/vm/' +
-                        vm["UUID"] +
-                        '/shutdown" method="POST">\n' +
-                        '<input id="nonce" value="' +
-                        nonce +
-                        '" name="nonce" type="hidden" />\n' +
-                        '<button class="shutdown" title="Shut down the VM"><i class="fa fa-stop"></i></button>\n' +
-                        '</form>\n' +
-                        '<form class="vm-control" action="' +
-                        script_root +
-                        '/admin/vspherevms/manage/vm/' +
-                        vm["UUID"] +
-                        '/restart" method="POST">\n' +
-                        '<input id="nonce" value="' +
-                        nonce +
-                        '" name="nonce" type="hidden" />\n' +
-                        '<button class="restart" title="Restart the VM"><i class="fa fa-refresh"></i></button>\n' +
-                        '</form>';
-                }
-            }
-            else if (vm["State"] === "suspended") {
-                html += '<form class="vm-control" action="' +
-                    script_root +
-                    '/admin/vspherevms/manage/vm/' +
-                    vm["UUID"] +
-                    '/resume" method="POST">\n' +
-                    '<input id="nonce" value="' +
-                    nonce +
-                    '" name="nonce" type="hidden" />\n' +
-                    '<button class="play" title="Resume the VM"><i class="fa fa-play"></i></button>\n' +
-                    '</form>';
-            }
-            else {
-                html += '<p>No actions possible</p>';
-            }
-
-            html += '</div>';
-
-            $(selector).append(html);
-        }
-
-        //NEWLY CREATED BUTTONS ALSO NEED TO BE CLICKABLE
     </script>
 {% endblock %}
 
