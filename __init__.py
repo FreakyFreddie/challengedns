@@ -64,7 +64,7 @@ def load(app):
 
             # error handling
             if len(errors) > 0:
-                return render_template('init_settings.html', errors=errors, settings=settings)
+                return render_template('cdns_init_settings.html', errors=errors, settings=settings)
             else:
                 #write all key-value pairs to database & redirect to manage
                 for key in settings:
@@ -87,7 +87,7 @@ def load(app):
             # generate dictionary with already filled in config options + empty options
             settings = config_opts_db()
 
-            return render_template('init_settings.html', settings=settings)
+            return render_template('cdns_init_settings.html', settings=settings)
 
 
     # Set up route to management interface
@@ -108,9 +108,9 @@ def load(app):
                 errors.append("Caught Exception : " + str(e))
 
             if len(errors) > 0:
-                return render_template('manage.html', errors=errors, dns_records=[])
+                return render_template('cdns_manage.html', errors=errors, dns_records=[])
 
-            return render_template('manage.html', dns_records=records)
+            return render_template('cdns_manage.html', dns_records=records)
 
 
     @challengedns.route('/admin/challengedns/manage/update', methods=['POST'])
