@@ -16,7 +16,7 @@ def load(app):
     app.db.create_all()
 
     # create plugin blueprint with template folder
-    challengedns = Blueprint('challengedns', __name__, template_folder='cdnstemplates')
+    challengedns = Blueprint('challengedns', __name__, template_folder='templates')
 
     #valid configuration settions with their type
     valid_settings ={
@@ -51,7 +51,7 @@ def load(app):
     # Set up route to configuration interface
     @challengedns.route('/admin/challengedns/configure', methods=['GET', 'POST'])
     @admins_only
-    def configure():
+    def rdns_configure():
         if request.method == 'POST':
             settings = {}
             errors = []
@@ -95,7 +95,7 @@ def load(app):
     @admins_only
     def manage():
         if not is_configured():
-            return redirect(url_for('.configure'), code=302)
+            return redirect(url_for('.rdns_configure'), code=302)
         else:
             errors = []
             records = []
