@@ -4,9 +4,8 @@ from CTFd.utils import admins_only, is_admin
 from CTFd.models import db
 
 import json
-
-from subprocess import Popen, PIPE, STDOUT
-import shlex
+import subprocess
+import socket
 
 from .models import *
 from .blacklist import *
@@ -21,22 +20,24 @@ def load(app):
     #valid configuration settions with their type
     valid_settings ={
         'DNS IP': ['text', '10.0.7.4'],
-        'Root domain': ['text', 'ctf.be'],
-        'Nameserver': ['text', 'ns1.ctf.be'],
-        'Keyfile': ['text', '/opt/CTFd/nsupdate.key'],
+        'Root domain': ['text', 'myctf.be'],
+        'Nameserver': ['text', 'ns1.myctf.be'],
+        'Keyfile': ['text', '/opt/CTFd/update_key.key'],
         'Port': ['number', '53']
     }
 
     delete_format = '''\
-            server {0}
-            update delete {1} A
-            send\
-            '''
+        server {0}
+        update delete {1} A
+        send
+        quit\
+        '''
 
     create_format = '''\
         server {0}
         update add {1} {2} A {3}
-        send\
+        send
+        quit\
         '''
 
     update_format = '''\
@@ -45,7 +46,8 @@ def load(app):
         send
         server {0}
         update add {1} {2} A {3}
-        send\
+        send
+        quit\
         '''
 
     # Set up route to configuration interface
@@ -139,6 +141,11 @@ def load(app):
     def update_record(chalname):
         if request.form["ipaddress"]:
             try:
+                socket.inet_aton(request.form["ipaddress"])
+            except socket.error:
+                return "IP is not valid."
+
+            try:
                 return update_operation(chalname, request.form["ipaddress"])
             except Exception as e:
                 print("Caught Exception : " + str(e))
@@ -150,6 +157,11 @@ def load(app):
     @admins_only
     def create_record():
         if request.form["chalname"] and request.form["ipaddress"]:
+            try:
+                socket.inet_aton(request.form["ipaddress"])
+            except socket.error:
+                return "IP is not valid."
+
             try:
                 return create_operation(request.form["chalname"], request.form["ipaddress"])
             except Exception as e:
@@ -202,6 +214,7 @@ def load(app):
                 ipaddress)
 
             return_code, stdout = nsupdate(operation)
+
             if return_code != 0:
                 return stdout
             else:
@@ -245,49 +258,45 @@ def load(app):
     def nsupdate(operation):
         keyfile = challengeDNSConfig.query.filter_by(option="Keyfile").first()
 
-        cmd = 'nsupdate -k {0}'.format(keyfile)
-
         # open subprocess and execute nsupdate cmd
-        # shlex.split() splits the cmd string using shell-like syntax
-        subp = Popen(shlex.split(cmd), stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        subp = subprocess.run(["nsupdate", "-k", keyfile, "-v"], stdin=operation, stdout=subprocess.PIPE)
 
-        stdout =subp.communicate(input=operation)[0]
-
-        return subp.returncode, stdout.decode()
+        return subp.returncode, subp.stdout.decode("utf-8")
 
     def output_zone_records(rootdomain, nameserver):
-        cmd = 'dig @{0} {1} axfr'.format(nameserver, rootdomain)
+        recs = []
 
         # open subprocess and execute dig cmd
-        # shlex.split() splits the cmd string using shell-like syntax
-        subp = Popen(shlex.split(cmd), stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        subp = subprocess.run(["dig", "@" + nameserver, rootdomain, "axfr"], stdout=subprocess.PIPE)
+        output = subp.stdout.decode("utf-8").split("\n")
 
-        stdout =subp.communicate(input=cmd)[0]
+        for line in output:
+            try:
+                recs.append(line.split())
+            except:
+                pass
 
-        return subp.returncode, stdout.decode()
+        return subp.returncode, recs
 
     def fetch_zone_records():
         rootdomain = challengeDNSConfig.query.filter_by(option="Root domain").first()
         nameserver = challengeDNSConfig.query.filter_by(option="Nameserver").first()
 
-        return_code, cmd_output = output_zone_records(rootdomain, nameserver)
+        return_code, recs = output_zone_records(rootdomain, nameserver)
         records = []
 
-        recs = cmd_output.splitlines()
+        if(return_code == 0):
+            for rec in recs:
+                # Only append A records
+                # Only append name and ip
+                if rec[3] == "A":
+                    rootdomain += "."
+                    chalname = rec[0].replace(rootdomain, "")
 
-        for rec in recs:
-            record = rec.split()
-
-            # Only append A records
-            # Only append name a
-            if record[3] == "A":
-                rootdomain += "."
-                chalname = record[0].replace(rootdomain, "")
-
-                # Append only if chalname not blacklisted
-                if chalname not in chalname_blacklist:
-                    # append challenge name and IP
-                    records.append([record[0],record[4]])
+                    # Append only if chalname not blacklisted
+                    if chalname not in chalname_blacklist:
+                        # append challenge name and IP
+                        records.append([rec[0],rec[4]])
 
         return records
 
