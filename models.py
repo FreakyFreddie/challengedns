@@ -1,7 +1,8 @@
 from CTFd.models import db
 
 class challengeDNSConfig(db.Model):
-    option = db.Column(db.Text, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    option = db.Column(db.Text)
     value = db.Column(db.Text)
 
     def __init__(self, option, value):
