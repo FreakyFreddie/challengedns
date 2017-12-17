@@ -177,10 +177,10 @@ def load(app):
 
         if nameserver and chalname:
             chalname = chalname.lower()
-            chalname_blacklist = fetch_updated_blacklist()
+            c_blacklist = fetch_updated_blacklist()
 
             # Append only if chalname not blacklisted
-            if chalname in chalname_blacklist:
+            if chalname in c_blacklist:
                 return "This record name is blacklisted."
 
             operation = delete_format.format(
@@ -203,10 +203,10 @@ def load(app):
 
         if nameserver and chalname and ipaddress:
             chalname = chalname.lower()
-            chalname_blacklist = fetch_updated_blacklist()
+            c_blacklist = fetch_updated_blacklist()
 
             # Append only if chalname not blacklisted
-            if chalname in chalname_blacklist:
+            if chalname in c_blacklist:
                 return "This record name is blacklisted."
 
             operation = update_format.format(
@@ -233,10 +233,10 @@ def load(app):
 
         if nameserver and chalname and ipaddress:
             chalname = chalname.lower()
-            chalname_blacklist = fetch_updated_blacklist()
+            c_blacklist = fetch_updated_blacklist()
 
             # Append only if chalname not blacklisted
-            if chalname in chalname_blacklist:
+            if chalname in c_blacklist:
                 return "This record name is blacklisted."
             
             operation = create_format.format(
@@ -285,7 +285,7 @@ def load(app):
     def fetch_zone_records():
         rootdomain = challengeDNSConfig.query.filter_by(option="Root domain").first().value
         nameserver = challengeDNSConfig.query.filter_by(option="Nameserver").first().value
-        chalname_blacklist = fetch_updated_blacklist()
+        c_blacklist = fetch_updated_blacklist()
 
         return_code, recs = output_zone_records(rootdomain, nameserver)
         records = []
@@ -299,7 +299,7 @@ def load(app):
                     chalname = rec[0].replace(rootdomain, "")
 
                     # Append only if chalname not blacklisted
-                    if chalname not in chalname_blacklist:
+                    if chalname not in c_blacklist:
                         # append challenge name and IP
                         records.append([rec[0],rec[4]])
 
@@ -334,7 +334,11 @@ def load(app):
     def fetch_updated_blacklist():
         # expand chalname_blacklist
         arec_chalnames = []
+        c_blacklist = []
+
         for chalname in chalname_blacklist:
+            c_blacklist.append(chalname)
+
             if chalname["Name"] == '':
                 arec_chalname = challengeDNSConfig.query.filter_by(option="Root domain").first().value + "."
             else:
@@ -344,8 +348,8 @@ def load(app):
                 arec_chalnames.append({"Name": arec_chalname})
 
         for arec_chalname in arec_chalnames:
-            chalname_blacklist.append(arec_chalname)
+            c_blacklist.append(arec_chalname)
 
-        return chalname_blacklist
+        return c_blacklist
 
     app.register_blueprint(challengedns)
