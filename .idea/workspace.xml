@@ -24,8 +24,8 @@
       <file leaf-file-name="cdns_manage.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_manage.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="273">
-              <caret line="19" column="13" lean-forward="true" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+            <state relative-caret-position="357">
+              <caret line="35" column="25" lean-forward="true" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -64,8 +64,8 @@
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="355">
-              <caret line="280" column="26" lean-forward="false" selection-start-line="280" selection-start-column="8" selection-end-line="280" selection-end-column="26" />
+            <state relative-caret-position="187">
+              <caret line="303" column="24" lean-forward="true" selection-start-line="303" selection-start-column="24" selection-end-line="303" selection-end-column="24" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -122,6 +122,9 @@
       <find>nsupdate</find>
       <find>challengeDNSCo</find>
       <find>caught Exception</find>
+      <find>subpr</find>
+      <find>output_zone_records</find>
+      <find>challengeDNSConfig</find>
     </findStrings>
     <replaceStrings>
       <replace>challengedns</replace>
@@ -141,10 +144,10 @@
         <option value="$PROJECT_DIR$/config.json" />
         <option value="$PROJECT_DIR$/templates/init_settings.html" />
         <option value="$PROJECT_DIR$/templates/manage.html" />
-        <option value="$PROJECT_DIR$/__init__.py" />
         <option value="$PROJECT_DIR$/models.py" />
         <option value="$PROJECT_DIR$/cdns_templates/cdns_manage.html" />
         <option value="$PROJECT_DIR$/cdns_templates/cdns_init_settings.html" />
+        <option value="$PROJECT_DIR$/__init__.py" />
       </list>
     </option>
   </component>
@@ -651,14 +654,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_manage.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="273">
-          <caret line="19" column="13" lean-forward="true" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_init_settings.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="641">
@@ -675,10 +670,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_manage.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="35" column="25" lean-forward="true" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="355">
-          <caret line="280" column="26" lean-forward="false" selection-start-line="280" selection-start-column="8" selection-end-line="280" selection-end-column="26" />
+        <state relative-caret-position="187">
+          <caret line="303" column="24" lean-forward="true" selection-start-line="303" selection-start-column="24" selection-end-line="303" selection-end-column="24" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

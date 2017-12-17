@@ -173,7 +173,7 @@ def load(app):
     def delete_operation(chalname):
         #check if exists
         #delete
-        nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first()
+        nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first().value
 
         if nameserver and chalname:
             chalname = chalname.lower()
@@ -198,7 +198,7 @@ def load(app):
     def update_operation(chalname, ipaddress):
         #check if exists
         #update record
-        nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first()
+        nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first().value
 
         if nameserver and chalname and ipaddress:
             chalname = chalname.lower()
@@ -227,7 +227,7 @@ def load(app):
     def create_operation(chalname, ipaddress):
         # check if exists
         # update record
-        nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first()
+        nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first().value
 
         if nameserver and chalname and ipaddress:
             chalname = chalname.lower()
@@ -256,7 +256,7 @@ def load(app):
 
 
     def nsupdate(operation):
-        keyfile = challengeDNSConfig.query.filter_by(option="Keyfile").first()
+        keyfile = challengeDNSConfig.query.filter_by(option="Keyfile").first().value
 
         # open subprocess and execute nsupdate cmd
         subp = subprocess.run(["nsupdate", "-k", keyfile, "-v"], stdin=operation, stdout=subprocess.PIPE)
@@ -279,8 +279,8 @@ def load(app):
         return subp.returncode, recs
 
     def fetch_zone_records():
-        rootdomain = challengeDNSConfig.query.filter_by(option="Root domain").first()
-        nameserver = challengeDNSConfig.query.filter_by(option="Nameserver").first()
+        rootdomain = challengeDNSConfig.query.filter_by(option="Root domain").first().value
+        nameserver = challengeDNSConfig.query.filter_by(option="Nameserver").first().value
 
         return_code, recs = output_zone_records(rootdomain, nameserver)
         records = []
