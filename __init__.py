@@ -339,13 +339,13 @@ def load(app):
         for chalname in chalname_blacklist:
             c_blacklist.append(chalname)
 
-            if chalname["Name"] == '':
+            if chalname == '':
                 arec_chalname = challengeDNSConfig.query.filter_by(option="Root domain").first().value + "."
             else:
-                arec_chalname = chalname["Name"] + "." + challengeDNSConfig.query.filter_by(
+                arec_chalname = chalname + "." + challengeDNSConfig.query.filter_by(
                     option="Root domain").first().value + "."
             if arec_chalname not in chalname_blacklist:
-                arec_chalnames.append({"Name": arec_chalname})
+                arec_chalnames.append(arec_chalname)
 
         for arec_chalname in arec_chalnames:
             c_blacklist.append(arec_chalname)
