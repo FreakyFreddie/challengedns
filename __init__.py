@@ -290,7 +290,7 @@ def load(app):
             for rec in recs:
                 # Only append A records
                 # Only append name and ip
-                if rec[3] == "A":
+                if rec and len(rec) > 3 and rec[3] == "A":
                     rootdomain += "."
                     chalname = rec[0].replace(rootdomain, "")
 
