@@ -16,57 +16,59 @@
             </div>
         {% endfor %}
     </div>
-    <div class="row">
-        <h1>Challenge DNS</h1>
-        <table id="record-list" class="table table-striped">
-            <thead>
-                <tr>
-                    <td width="10px"><b>#</b></td>
-                    <td><b>Record</b></td>
-                    <td><b>IP address</b></td>
-                </tr>
-            </thead>
-            <tbody>
-            {% for record in records %}
-                <tr data-toggle="modal" data-target="#record-modal">
-                    <td>{{ loop.index }}</td>
-                    <td class="chalname">{{ record[0] }}</td>
-                    <td class="ipaddress">{{ record[1] }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="modal fade" id="record-modal" role="dialog"  tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h3 id="recordname">DNS record</h3>
-                </div>
-                <div class="modal-body">
-                    <input id="ipaddress" />
-                </div>
-                <div class="modal-footer">
-                    <button id="saverecord" type="button" class="btn btn-default">Save changes</button>
-                    <button id="deleterecord" type="button" class="btn btn-default">Delete</button>
+    <div class="container">
+        <div class="row">
+            <h1>Challenge DNS</h1>
+            <table id="record-list" class="table table-striped">
+                <thead>
+                    <tr>
+                        <td width="10px"><b>#</b></td>
+                        <td><b>Record</b></td>
+                        <td><b>IP address</b></td>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for record in records %}
+                    <tr data-toggle="modal" data-target="#record-modal">
+                        <td>{{ loop.index }}</td>
+                        <td class="chalname">{{ record[0] }}</td>
+                        <td class="ipaddress">{{ record[1] }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="record-modal" role="dialog"  tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 id="recordname">DNS record</h3>
+                    </div>
+                    <div class="modal-body">
+                        <input id="ipaddress" />
+                    </div>
+                    <div class="modal-footer">
+                        <button id="saverecord" type="button" class="btn btn-default">Save changes</button>
+                        <button id="deleterecord" type="button" class="btn btn-default">Delete</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="modal fade" id="new-record-modal" role="dialog"  tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h3 id="recordname">New DNS record</h3>
-                </div>
-                <div class="modal-body">
-                    <input id="newchalname" />
-                    <input id="newipaddress" />
-                </div>
-                <div class="modal-footer">
-                    <button id="createrecord" type="button" class="btn btn-default">Create record</button>
+        <div class="modal fade" id="new-record-modal" role="dialog"  tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 id="recordname">New DNS record</h3>
+                    </div>
+                    <div class="modal-body">
+                        <input id="newchalname" />
+                        <input id="newipaddress" />
+                    </div>
+                    <div class="modal-footer">
+                        <button id="createrecord" type="button" class="btn btn-default">Create record</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -13,22 +13,24 @@
             </div>
         {% endfor %}
         <br>
-        <h1>Configure challengeDNS</h1>
-        <div class="row">
-            <form action="{{ request.script_root }}/admin/challengedns/configure" method="POST">
-                <input id="nonce" value="{{ nonce }}" name="nonce" type="hidden" />
-                <fieldset>
-                    {% for key in settings %}
-                        <label for="{{key}}">{{key}}</label>
-                        <br />
-                        <input type="{{settings[key][0]}}" name="{{key}}" value="{{settings[key][1]}}"/>
-                        <br />
-                    {% endfor %}
-                </fieldset>
-                <fieldset id="submit_btn">
-                    <input type="submit" value="Submit" />
-                </fieldset>
-            </form>
+        <div class="container">
+            <h1>Configure challengeDNS</h1>
+            <div class="row">
+                <form action="{{ request.script_root }}/admin/challengedns/configure" method="POST">
+                    <input id="nonce" value="{{ nonce }}" name="nonce" type="hidden" />
+                    <fieldset>
+                        {% for key in settings %}
+                            <label for="{{key}}">{{key}}</label>
+                            <br />
+                            <input type="{{settings[key][0]}}" name="{{key}}" value="{{settings[key][1]}}"/>
+                            <br />
+                        {% endfor %}
+                    </fieldset>
+                    <fieldset id="submit_btn">
+                        <input type="submit" value="Submit" />
+                    </fieldset>
+                </form>
+            </div>
         </div>
     </div>
 {% endblock %}
