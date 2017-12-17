@@ -64,8 +64,8 @@
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="565">
-              <caret line="88" column="63" lean-forward="false" selection-start-line="88" selection-start-column="63" selection-end-line="88" selection-end-column="63" />
+            <state relative-caret-position="586">
+              <caret line="89" column="74" lean-forward="true" selection-start-line="89" selection-start-column="74" selection-end-line="89" selection-end-column="74" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -128,6 +128,7 @@
       <find>dig</find>
       <find>keyfile</find>
       <find>blacklist</find>
+      <find>root</find>
     </findStrings>
     <replaceStrings>
       <replace>challengedns</replace>
@@ -683,8 +684,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="565">
-          <caret line="88" column="63" lean-forward="false" selection-start-line="88" selection-start-column="63" selection-end-line="88" selection-end-column="63" />
+        <state relative-caret-position="586">
+          <caret line="89" column="74" lean-forward="true" selection-start-line="89" selection-start-column="74" selection-end-line="89" selection-end-column="74" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
