@@ -83,6 +83,12 @@ def load(app):
                         db.session.commit()
                         db.session.flush()
 
+                #expand chalname_blacklist
+                for chalname in chalname_blacklist:
+                    arec_chalname = chalname + challengeDNSConfig.query.filter_by(option="Root domain").first().value + "."
+                    if arec_chalname not in chalname_blacklist
+                        chalname_blacklist.append(arec_chalname)
+
                 return redirect(url_for('.cdns_manage'), code=302)
 
         else:
