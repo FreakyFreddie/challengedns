@@ -264,10 +264,11 @@ def load(app):
         return subp.returncode, subp.stdout.decode("utf-8")
 
     def output_zone_records(rootdomain, nameserver):
+        keyfile = challengeDNSConfig.query.filter_by(option="Keyfile").first().value
         recs = []
 
         # open subprocess and execute dig cmd
-        subp = subprocess.run(["dig", "@" + nameserver, rootdomain, "axfr"], stdout=subprocess.PIPE)
+        subp = subprocess.run(["dig", "@" + nameserver, rootdomain, "axfr", "-k", keyfile], stdout=subprocess.PIPE)
         output = subp.stdout.decode("utf-8").split("\n")
 
         for line in output:
