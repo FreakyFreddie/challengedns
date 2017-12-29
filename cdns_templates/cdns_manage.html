@@ -1,24 +1,28 @@
 {% extends "admin/base.html" %}
 {% block stylesheets %}
-<style>
-    #record-list > tbody > tr{
-        cursor: pointer;
-    }
-</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        #record-list > tbody > tr{
+            cursor: pointer;
+        }
+    </style>
 {% endblock %}
 {% block content %}
-    <div id="errordiv" class="text-center">
-        {% for error in errors %}
-            <div class="alert alert-danger alert-dismissable" role="alert">
-              <span class="sr-only">Error:</span>
-              {{ error }}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-            </div>
-        {% endfor %}
-    </div>
     <div class="container">
+        <div id="errordiv" class="text-center">
+            {% for error in errors %}
+                <div class="alert alert-danger alert-dismissable" role="alert">
+                  <span class="sr-only">Error:</span>
+                  {{ error }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+            {% endfor %}
+        </div>
         <div class="row">
             <h1>Challenge DNS</h1>
+            <i class="btn-fa fas fa-plus-circle" role="button" data-toggle="modal" data-target="#new-record-modal" title="Create record"></i>
+        </div>
+        <div class="row">
             <table id="record-list" class="table table-striped">
                 <thead>
                     <tr>
