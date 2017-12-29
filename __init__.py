@@ -309,7 +309,7 @@ def load(app):
 
     def fetch_zone_records():
         rootdomain = challengeDNSConfig.query.filter_by(option="Root domain").first().value
-        nameserver = challengeDNSConfig.query.filter_by(option="Nameserver").first().value
+        nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first().value
         c_blacklist = fetch_updated_blacklist()
 
         return_code, recs = output_zone_records(rootdomain, nameserver)
