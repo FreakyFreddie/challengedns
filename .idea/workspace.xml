@@ -21,11 +21,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cdns_manage.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="cdns_manage.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_manage.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="567">
-              <caret line="30" column="35" lean-forward="true" selection-start-line="30" selection-start-column="35" selection-end-line="30" selection-end-column="35" />
+            <state relative-caret-position="315">
+              <caret line="85" column="97" lean-forward="false" selection-start-line="85" selection-start-column="97" selection-end-line="85" selection-end-column="97" />
               <folding>
                 <element signature="e#2139#2146#1#HTML" expanded="true" />
               </folding>
@@ -63,7 +63,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="376">
@@ -109,8 +109,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>8</find>
-      <find>hostname</find>
       <find>process_response</find>
       <find>vsph</find>
       <find>configure</find>
@@ -139,6 +137,8 @@
       <find>delete_format</find>
       <find>value</find>
       <find>Nameserver</find>
+      <find>nsupdateop</find>
+      <find>manage</find>
     </findStrings>
     <replaceStrings>
       <replace>challengedns</replace>
@@ -159,9 +159,9 @@
         <option value="$PROJECT_DIR$/templates/manage.html" />
         <option value="$PROJECT_DIR$/models.py" />
         <option value="$PROJECT_DIR$/blacklist.py" />
-        <option value="$PROJECT_DIR$/cdns_templates/cdns_manage.html" />
         <option value="$PROJECT_DIR$/cdns_templates/cdns_init_settings.html" />
         <option value="$PROJECT_DIR$/__init__.py" />
+        <option value="$PROJECT_DIR$/cdns_templates/cdns_manage.html" />
       </list>
     </option>
   </component>
@@ -680,24 +680,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_init_settings.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="22" column="32" lean-forward="false" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_manage.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="567">
-          <caret line="30" column="35" lean-forward="true" selection-start-line="30" selection-start-column="35" selection-end-line="30" selection-end-column="35" />
-          <folding>
-            <element signature="e#2139#2146#1#HTML" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/blacklist.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -712,6 +694,24 @@
           <caret line="289" column="82" lean-forward="false" selection-start-line="289" selection-start-column="82" selection-end-line="289" selection-end-column="82" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_init_settings.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="22" column="32" lean-forward="false" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_manage.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="85" column="97" lean-forward="false" selection-start-line="85" selection-start-column="97" selection-end-line="85" selection-end-column="97" />
+          <folding>
+            <element signature="e#2139#2146#1#HTML" expanded="true" />
           </folding>
         </state>
       </provider>

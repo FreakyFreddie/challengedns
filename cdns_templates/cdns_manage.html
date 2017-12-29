@@ -83,7 +83,9 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="{{ request.script_root }}/themes/admin/static/js/vendor/jquery.min.js"></script>
+    <script src="{{ request.script_root }}/themes/admin/static/js/vendor/bootstrap.bundle.min.js"></script>
+
     <script type="text/javascript">
         //If you want to add content dynamically and still need it to work, and also with more than one form, you can do this:
         $(document).ready(function() {
