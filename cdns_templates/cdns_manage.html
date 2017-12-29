@@ -51,8 +51,10 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <label for="ipaddress">IP address</label>
-                            <input id="ipaddress" name="ipaddress" />
+                            <div class="col-sm-12">
+                                <label for="ipaddress">IP address</label>
+                                <input id="ipaddress" name="ipaddress" />
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -71,12 +73,16 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <label for="newchalname">Name</label>
-                            <input id="newchalname" name="newchalname" />
+                            <div class="col-sm-12">
+                                <label for="newchalname">Name</label>
+                                <input id="newchalname" name="newchalname" />
+                            </div>
                         </div>
                         <div class="row">
-                            <label for="newipaddress">IP address</label>
-                            <input id="newipaddress" name="newipaddress" />
+                            <div class="col-sm-12">
+                                <label for="newipaddress">IP address</label>
+                                <input id="newipaddress" name="newipaddress" />
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -132,7 +138,7 @@
                 });
 
                 $("#deleterecord").off("click").click(function(){
-                    remove_record($("#chalname").val());
+                    remove_record($("#chalname").text());
 
                     //close modal
                     $('#record-modal').modal({show:false});
