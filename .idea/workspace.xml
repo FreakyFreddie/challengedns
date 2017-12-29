@@ -24,8 +24,8 @@
       <file leaf-file-name="cdns_manage.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_manage.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="376">
-              <caret line="139" column="58" lean-forward="false" selection-start-line="139" selection-start-column="58" selection-end-line="139" selection-end-column="58" />
+            <state relative-caret-position="271">
+              <caret line="166" column="30" lean-forward="false" selection-start-line="166" selection-start-column="17" selection-end-line="166" selection-end-column="30" />
               <folding>
                 <element signature="e#2139#2146#1#HTML" expanded="true" />
               </folding>
@@ -109,7 +109,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>vsph</find>
       <find>configure</find>
       <find>vsphere</find>
       <find>redirect</find>
@@ -139,6 +138,7 @@
       <find>nsupdateop</find>
       <find>manage</find>
       <find>remove</find>
+      <find>remove_record</find>
     </findStrings>
     <replaceStrings>
       <replace>challengedns</replace>
@@ -708,8 +708,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cdns_templates/cdns_manage.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="376">
-          <caret line="139" column="58" lean-forward="false" selection-start-line="139" selection-start-column="58" selection-end-line="139" selection-end-column="58" />
+        <state relative-caret-position="271">
+          <caret line="166" column="30" lean-forward="false" selection-start-line="166" selection-start-column="17" selection-end-line="166" selection-end-column="30" />
           <folding>
             <element signature="e#2139#2146#1#HTML" expanded="true" />
           </folding>

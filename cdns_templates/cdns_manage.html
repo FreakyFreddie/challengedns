@@ -138,7 +138,7 @@
                 });
 
                 $("#deleterecord").off("click").click(function(){
-                    remove_record($(this).find(".chalname").text());
+                    remove_record($("#recordname").text());
 
                     //close modal
                     $('#record-modal').modal({show:false});
