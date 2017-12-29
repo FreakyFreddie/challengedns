@@ -185,7 +185,8 @@ def load(app):
 
             operation = delete_format.format(
                 nameserver,
-                chalname)
+                chalname).encode('utf-8')
+            
             return_code, stdout = nsupdate(operation)
             if return_code != 0:
                 return stdout
@@ -213,7 +214,7 @@ def load(app):
                 nameserver,
                 chalname,
                 8640,
-                ipaddress)
+                ipaddress).encode('utf-8')
 
             return_code, stdout = nsupdate(operation)
 
@@ -243,7 +244,7 @@ def load(app):
                 nameserver,
                 chalname,
                 8640,
-                ipaddress)
+                ipaddress).encode('utf-8')
 
             return_code, stdout = nsupdate(operation)
             
