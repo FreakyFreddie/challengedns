@@ -21,31 +21,34 @@ def load(app):
     valid_settings ={
         'DNS IP': ['text', '10.0.7.4'],
         'Root domain': ['text', 'tmctf.be'],
-        'Nameserver': ['text', 'db'],
         'Keyfile': ['text', '/opt/CTFd/update_key.key'],
         'Port': ['number', '53']
     }
 
     delete_format = '''\
         server {0}
-        update delete {1} A
+        zone {1}
+        update delete {2} A
         send
         quit\
         '''
 
     create_format = '''\
         server {0}
-        update add {1} {2} A {3}
+        zone {1}
+        update add {2} {3} A {4}
         send
         quit\
         '''
 
     update_format = '''\
         server {0}
-        update delete {1} A
+        zone {1}
+        update delete {2} A
         send
         server {0}
-        update add {1} {2} A {3}
+        zone {1}
+        update add {2} {3} A {4}
         send
         quit\
         '''
@@ -174,6 +177,7 @@ def load(app):
         #check if exists
         #delete
         nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first().value
+        zone = challengeDNSConfig.query.filter_by(option="Root domain").first().value
 
         if nameserver and chalname:
             chalname = chalname.lower()
@@ -183,8 +187,13 @@ def load(app):
             if chalname in c_blacklist:
                 return "This record name is blacklisted."
 
+            # if .zone. not a substring of chalname, append it
+            if ("." + zone + ".") not in chalname:
+                chalname = chalname + "." + zone + "."
+
             operation = delete_format.format(
                 nameserver,
+                zone,
                 chalname)
 
             return_code, stdout = nsupdate(operation)
@@ -201,6 +210,7 @@ def load(app):
         #check if exists
         #update record
         nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first().value
+        zone = challengeDNSConfig.query.filter_by(option="Root domain").first().value
 
         if nameserver and chalname and ipaddress:
             chalname = chalname.lower()
@@ -210,8 +220,13 @@ def load(app):
             if chalname in c_blacklist:
                 return "This record name is blacklisted."
 
+            # if .zone. not a substring of chalname, append it
+            if ("." + zone + ".") not in chalname:
+                chalname = chalname + "." + zone + "."
+
             operation = update_format.format(
                 nameserver,
+                zone,
                 chalname,
                 8640,
                 ipaddress)
@@ -231,6 +246,7 @@ def load(app):
         # check if exists
         # update record
         nameserver = challengeDNSConfig.query.filter_by(option="DNS IP").first().value
+        zone = challengeDNSConfig.query.filter_by(option="Root domain").first().value
 
         if nameserver and chalname and ipaddress:
             chalname = chalname.lower()
@@ -239,9 +255,14 @@ def load(app):
             # Append only if chalname not blacklisted
             if chalname in c_blacklist:
                 return "This record name is blacklisted."
+
+            # if .zone. not a substring of chalname, append it
+            if ("." + zone + ".") not in chalname:
+                chalname = chalname + "." + zone + "."
             
             operation = create_format.format(
                 nameserver,
+                zone,
                 chalname,
                 8640,
                 ipaddress)
