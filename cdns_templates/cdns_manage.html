@@ -50,8 +50,10 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <label for="ipaddress">IP address</label>
-                        <input id="ipaddress" name="ipaddress" />
+                        <div class="row">
+                            <label for="ipaddress">IP address</label>
+                            <input id="ipaddress" name="ipaddress" />
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button id="saverecord" type="button" class="btn btn-default">Save changes</button>
@@ -68,10 +70,14 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <label for="newchalname">Name</label>
-                        <input id="newchalname" name="newchalname" />
-                        <label for="newipaddress">IP address</label>
-                        <input id="newipaddress" name="newipaddress" />
+                        <div class="row">
+                            <label for="newchalname">Name</label>
+                            <input id="newchalname" name="newchalname" />
+                        </div>
+                        <div class="row">
+                            <label for="newipaddress">IP address</label>
+                            <input id="newipaddress" name="newipaddress" />
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button id="createrecord" type="button" class="btn btn-default">Create record</button>
@@ -153,7 +159,7 @@
         }
 
         function remove_record(chalname){
-            var url = script_root + "/admin/challengedns/manage/record/" + chalname + "delete?r=" + new Date().getTime();
+            var url = script_root + "/admin/challengedns/manage/record/" + chalname + "/delete?r=" + new Date().getTime();
             var data = {nonce: "{{ nonce }}"};
 
             process_request(url, data);
