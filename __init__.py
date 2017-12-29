@@ -185,8 +185,8 @@ def load(app):
 
             operation = delete_format.format(
                 nameserver,
-                chalname).encode('utf-8')
-            
+                chalname)
+
             return_code, stdout = nsupdate(operation)
             if return_code != 0:
                 return stdout
@@ -214,7 +214,7 @@ def load(app):
                 nameserver,
                 chalname,
                 8640,
-                ipaddress).encode('utf-8')
+                ipaddress)
 
             return_code, stdout = nsupdate(operation)
 
@@ -244,7 +244,7 @@ def load(app):
                 nameserver,
                 chalname,
                 8640,
-                ipaddress).encode('utf-8')
+                ipaddress)
 
             return_code, stdout = nsupdate(operation)
             
@@ -263,7 +263,8 @@ def load(app):
         keyfile = challengeDNSConfig.query.filter_by(option="Keyfile").first().value
 
         # open subprocess and execute nsupdate cmd
-        subp = subprocess.run(["nsupdate", "-k", keyfile, "-v"], stdin=operation, stdout=subprocess.PIPE)
+        subp = subprocess.run(["nsupdate", "-k", keyfile, "-v"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        subp.communicate(input=operation)
 
         return subp.returncode, subp.stdout.decode("utf-8")
 
