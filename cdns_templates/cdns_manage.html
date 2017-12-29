@@ -46,11 +46,12 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h3 id="recordname">DNS record</h3>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <input id="ipaddress" />
+                        <label for="ipaddress">IP address</label>
+                        <input id="ipaddress" name="ipaddress" />
                     </div>
                     <div class="modal-footer">
                         <button id="saverecord" type="button" class="btn btn-default">Save changes</button>
@@ -63,12 +64,14 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h3 id="recordname">New DNS record</h3>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <input id="newchalname" />
-                        <input id="newipaddress" />
+                        <label for="newchalname">Name</label>
+                        <input id="newchalname" name="newchalname" />
+                        <label for="newipaddress">IP address</label>
+                        <input id="newipaddress" name="newipaddress" />
                     </div>
                     <div class="modal-footer">
                         <button id="createrecord" type="button" class="btn btn-default">Create record</button>

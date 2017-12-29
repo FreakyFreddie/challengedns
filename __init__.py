@@ -20,8 +20,8 @@ def load(app):
     #valid configuration settions with their type
     valid_settings ={
         'DNS IP': ['text', '10.0.7.4'],
-        'Root domain': ['text', 'myctf.be'],
-        'Nameserver': ['text', 'ns1.myctf.be'],
+        'Root domain': ['text', 'tmctf.be'],
+        'Nameserver': ['text', 'db'],
         'Keyfile': ['text', '/opt/CTFd/update_key.key'],
         'Port': ['number', '53']
     }
