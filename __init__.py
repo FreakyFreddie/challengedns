@@ -261,10 +261,12 @@ def load(app):
 
     def nsupdate(operation):
         keyfile = challengeDNSConfig.query.filter_by(option="Keyfile").first().value
+        f = open('nsupdateoperation', 'w')
+        f.write(operation)
 
         # open subprocess and execute nsupdate cmd
-        subp = subprocess.run(["nsupdate", "-k", keyfile, "-v"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        subp.communicate(input=operation)
+        subp = subprocess.run(["nsupdate", "-k", keyfile, "-v"], stdin=f, stdout=subprocess.PIPE)
+        f.close()
 
         return subp.returncode, subp.stdout.decode("utf-8")
 
