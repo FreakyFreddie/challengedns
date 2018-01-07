@@ -1,4 +1,3 @@
-import os
 from flask import Blueprint, render_template, request, abort, redirect, url_for
 from CTFd.utils import admins_only, is_admin
 from CTFd.models import db
